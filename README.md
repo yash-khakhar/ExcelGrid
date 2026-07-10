@@ -96,6 +96,19 @@ Rendering 100,000 rows and 500 columns simultaneously on a traditional webpage D
 * File Processing Pipelines: Mass records uploads bypass internal runtime storage constraints via the decoupled JSONLoader structure.  
 * Transaction Safety Guard: Loading a JSON file does not overwrite data destructively. The ingestion logic translates the payload matrix into an atomic command operation (LoadFileCommand) and pushes it onto the operational history stack. This allows users to undo a massive file import and restore their original spreadsheet state instantly.  
 
+## ⚠️ Known Limitations  
+While highly optimized for massive datasets, the engine currently has the following scope constraints:  
+* Single-Line Text Overlay: The floating text edit input handles wide expansions beautifully but is confined to single-line text data inputs; multiline cell text wrapping (Alt + Enter functionality) is not natively split within the canvas rendering matrices.  
+* Bypassed Full-Sheet Analytics: When selecting the absolute whole grid matrix (50 Million+ cells via the top-left intersect corner click), real-time status bar statistics (Sum, Average) are explicitly truncated or bypassed to avoid main-thread script time execution blocks.  
+* Formula Parsing Deprivation: Text string entries beginning with = are handled as raw primitive string inputs; the engine does not evaluate cell dependencies, math evaluations (=SUM(A1:B12)), or cross-coordinate string parsing.  
+* Sparse Layout Memory Expansion: The layout coordinates arrays (rowPositions, colPositions) currently scale sequentially in flat arrays up to maximum capacities. For bounds scaling into billions of rows, a flat array architecture introduces memory footprints that require structural segmentation.  
+
+## 🔮 Next Improvements  
+To scale this layout component into a production-grade enterprise spreadsheet tool, the following enhancements are queued:  
+* Sparse Matrix Data Layer: Upgrading the DataManager internal dictionary representation to a pure sparse map object key strategy Record<string, string> rather than dense allocations to minimize heap overhead.  
+* Web Worker Parallel Calculation Layer: Offloading multi-million cell range statistics computations (calculateMetrics) and intricate formula parsing blocks away from the main UI browser thread into background Web Workers.  
+* Extended Cell Formatting Commands: Adding inline stylistic state layers (text coloring, background font styling, clipping masks, numerical date alignments) fully compatible with the active Command undo/redo transaction stack pipelines.  
+
 ## ⚙️ How to Install and Run  
 1. Installation  
 Clone the spreadsheet source files container directly into your preferred project storage folder, then install development dependencies:  
@@ -114,4 +127,4 @@ Because browser security protocols prevent native JavaScript modules (import/exp
 npm run dev  
 ```
 
-Open the provided local loop address (e.g., http://localhost:3000) in web browser to interact with the spreadsheet!
+Open the provided local loop address (e.g., http://localhost:3000) in web browser to interact with the spreadsheet!  
