@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas High Performance Spreadsheet</title>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+    body, html { 
+        margin: 0; 
+        padding: 0; 
+        width: 100%; 
+        height: 100%; 
+        overflow: hidden; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+    /* Wrap everything (Top Bar header + spreadsheet area) into a main viewport wrapper */
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    .top-menu-bar {
+        background: #107c41; 
+        padding: 6px; 
+        display: flex; 
+        gap: 10px; 
+        align-items: center;
+        height: 40px; /* Explicit height to help calculations */
+    }
+    .spreadsheet-container { 
+        position: relative; 
+        width: 100vw; 
+        flex-grow: 1; /* Dynamic calculation for remaining space */
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    canvas { 
+        display: block; 
+        background: #fff; 
+        flex-grow: 1; 
+        width: 100%;
+        height: calc(100% - 32px); /* Forces canvas to respect the exact room left by statusbar */
+    }
+    #statusBar { 
+        background: #217346; 
+        color: white; 
+        padding: 6px 12px; 
+        font-size: 13px; 
+        font-weight: 500; 
+        height: 32px; 
+        line-height: 20px;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+    }
+</style>
+</head>
+<body>
+
+    <div class="top-menu-bar">
+        <button id="loadJsonBtn" style="background: white; border: none; padding: 4px 12px; border-radius: 2px; font-weight: bold; cursor: pointer; font-family: sans-serif;">
+            Open JSON File
+        </button>
+    </div>
+    <div class="spreadsheet-container">
+        <canvas id="excelCanvas"></canvas>
+        <div id="statusBar">Ready</div>
+    </div>
+
+    <script type="module">
+        import { Spreadsheet } from './dist/core/Spreadsheet.js';
+        const canvas = document.getElementById('excelCanvas');
+        const statusBar = document.getElementById('statusBar');
+        const sheet = new Spreadsheet(canvas, statusBar);
+        document.getElementById('loadJsonBtn').addEventListener('click', () => {
+            sheet.triggerJSONLoadDialogue();
+        });
+    </script>
+</body>
+</html>
