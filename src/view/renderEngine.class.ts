@@ -24,8 +24,14 @@ export class RenderEngine {
 
     public render(scrollX: number, scrollY: number): void {
         const ctx = this.ctx;
-        const width = this.canvas.width;
-        const height = this.canvas.height;
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+
+        // Synchronize actual canvas buffer size with display size if mismatched
+        if (this.canvas.width !== width || this.canvas.height !== height) {
+            this.canvas.width = width;
+            this.canvas.height = height;
+        }
 
         ctx.clearRect(0, 0, width, height);
         ctx.fillStyle = '#ffffff';

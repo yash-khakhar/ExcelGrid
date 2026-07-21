@@ -223,4 +223,15 @@ export class Spreadsheet {
             this.cellInput.style.width = `${baseWidth - 1}px`;
         }
     }
+
+    public scrollBy(deltaX: number, deltaY: number): void {
+        const dataMgr = this.getDataManager();
+        const maxScrollX = Math.max(0, dataMgr.colPositions[dataMgr.totalCols - 1]! - this.canvas.clientWidth);
+        const maxScrollY = Math.max(0, dataMgr.rowPositions[dataMgr.totalRows - 1]! - this.canvas.clientHeight);
+
+        this.scrollX = Math.min(maxScrollX, Math.max(0, this.scrollX + deltaX));
+        this.scrollY = Math.min(maxScrollY, Math.max(0, this.scrollY + deltaY));
+
+        this.draw();
+    }
 }
